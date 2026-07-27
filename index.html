@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Voice Recovery Planner</title>
+<meta name="description" content="A daily companion app for life after laryngectomy — voice tracking, device care, appointments, medications, and recovery milestones.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=8">
+</head>
+<body>
+
+<header class="app-header">
+  <div class="wrap">
+    <a class="brand" href="https://supaflux5-sherlock.github.io/">← Ben Watson</a>
+    <span class="title">Voice Recovery Planner</span>
+  </div>
+</header>
+<canvas id="ecg-canvas"></canvas>
+
+<div class="reminders-bar">
+  <div class="wrap">
+    <span class="status-line">
+      <span id="reminders-dot" class="status-dot"></span>
+      <span id="reminders-status">Reminders are off</span>
+    </span>
+    <button id="reminders-toggle" class="save-btn small">Enable reminders</button>
+  </div>
+</div>
+
+<nav class="tabs">
+  <div class="wrap tabs-scroll">
+    <button class="tab active" data-tab="daily">Daily Tracker</button>
+    <button class="tab" data-tab="device">Device Care</button>
+    <button class="tab" data-tab="dietary">Dietary</button>
+    <button class="tab" data-tab="bloodwork">Bloodwork</button>
+    <button class="tab" data-tab="appointments">Appointments</button>
+    <button class="tab" data-tab="medications">Medications</button>
+    <button class="tab" data-tab="journal">Symptom Journal</button>
+    <button class="tab" data-tab="milestones">Milestones</button>
+    <button class="tab" data-tab="caregiver">Caregiver Log</button>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- DAILY VOICE & BREATHING TRACKER -->
+  <section id="daily" class="panel active">
+    <h2>Daily Voice &amp; Breathing Tracker</h2>
+    <p class="subtitle">Track exercises, voicing time, and how your voice felt today</p>
+    <label class="field">Date
+      <input type="date" id="daily-date">
+    </label>
+    <div class="checklist" id="daily-checklist">
+      <label><input type="checkbox" data-key="daily-diaphragmatic"> Diaphragmatic breathing</label>
+      <label><input type="checkbox" data-key="daily-restperiod"> Voice rest period taken</label>
+      <label><input type="checkbox" data-key="daily-pacing"> Practiced pacing / breath support while speaking</label>
+      <label><input type="checkbox" data-key="daily-humming"> Humming or gentle voicing warm-up</label>
+      <label><input type="checkbox" data-key="daily-therapy"> Speech therapy home exercises</label>
+    </div>
+    <p class="field-label">How did your voice feel today?</p>
+    <div class="pill-group" id="daily-scale" data-group="daily-feel">
+      <button data-value="Strained">Strained</button>
+      <button data-value="Tired">Tired</button>
+      <button data-value="Okay">Okay</button>
+      <button data-value="Clear">Clear</button>
+      <button data-value="Strong">Strong</button>
+    </div>
+    <label class="field">Notes
+      <textarea id="daily-notes" rows="4" placeholder="Anything worth remembering about today..."></textarea>
+    </label>
+    <button class="save-btn" data-save="daily">Save Today's Entry</button>
+    <div class="history" id="daily-history"></div>
+  </section>
+
+  <!-- DEVICE CARE SCHEDULE -->
+  <section id="device" class="panel">
+    <h2>Voice Device Care Schedule</h2>
+    <p class="subtitle">Daily cleaning, weekly refurbishing, and resupply — never miss a step</p>
+
+    <p class="field-label">Which device(s) do you use?</p>
+    <div class="checklist" id="device-type-checklist">
+      <label><input type="checkbox" data-key="devicetype-laryngectomy"> Laryngectomy (stoma / HME)</label>
+      <label><input type="checkbox" data-key="devicetype-tep"> TEP (voice prosthesis)</label>
+      <label><input type="checkbox" data-key="devicetype-avavoice"> Ava Voice</label>
+      <label><input type="checkbox" data-key="devicetype-mira"> Mira</label>
+    </div>
+
+    <div class="card">
+      <h3>Today</h3>
+      <label><input type="checkbox" id="device-cleaned-today"> Cleaned overnight (before bed)</label>
+    </div>
+
+    <div class="card">
+      <h3>This Week</h3>
+      <div class="week-grid" id="device-week"></div>
+    </div>
+
+    <div class="card">
+      <h3>Every 6 Months</h3>
+      <label class="field">Last resupply ordered
+        <input type="date" id="device-last-resupply">
+      </label>
+      <label class="field">Next resupply due
+        <input type="date" id="device-next-resupply">
+      </label>
+    </div>
+
+    <label class="field">Device issue notes
+      <textarea id="device-notes" rows="4" placeholder="Any issues with the device this week..."></textarea>
+    </label>
+    <button class="save-btn" data-save="device">Save</button>
+  </section>
+
+  <!-- DIETARY -->
+  <section id="dietary" class="panel">
+    <h2>Dietary</h2>
+    <p class="subtitle">Track how you're getting nutrition today — by mouth, feeding tube, or IV</p>
+    <label class="field">Date
+      <input type="date" id="dietary-date">
+    </label>
+    <p class="field-label">Feeding method today</p>
+    <div class="checklist" id="dietary-checklist">
+      <label><input type="checkbox" data-key="dietary-mouth"> Feeding by mouth</label>
+      <label><input type="checkbox" data-key="dietary-tube"> Feeding tube</label>
+      <label><input type="checkbox" data-key="dietary-iv"> IV</label>
+    </div>
+    <label class="field">Notes (what/how much, tolerance, any issues)
+      <textarea id="dietary-notes" rows="4" placeholder="What you ate or how feeding went today..."></textarea>
+    </label>
+    <button class="save-btn" data-save="dietary">Save Today's Entry</button>
+    <div class="history" id="dietary-history"></div>
+  </section>
+
+  <!-- BLOODWORK -->
+  <section id="bloodwork" class="panel">
+    <h2>Bloodwork Tracking</h2>
+    <p class="subtitle">Focused on anemia and vitamin/mineral/kidney (renal) function</p>
+    <p class="field-label">Common tests worth asking your doctor about</p>
+    <div class="checklist" id="bloodwork-checklist">
+      <label><input type="checkbox" data-key="bloodwork-hgb"> Hemoglobin / Hematocrit (anemia)</label>
+      <label><input type="checkbox" data-key="bloodwork-iron"> Iron / Ferritin</label>
+      <label><input type="checkbox" data-key="bloodwork-b12"> Vitamin B12 / Folate</label>
+      <label><input type="checkbox" data-key="bloodwork-vitd"> Vitamin D</label>
+      <label><input type="checkbox" data-key="bloodwork-calcmag"> Calcium / Magnesium / Zinc</label>
+      <label><input type="checkbox" data-key="bloodwork-renal"> Creatinine / eGFR / BUN (kidney/renal function)</label>
+      <label><input type="checkbox" data-key="bloodwork-electrolytes"> Potassium / Sodium</label>
+    </div>
+    <table class="log-table" id="bloodwork-table">
+      <thead><tr><th>Date</th><th>Test</th><th>Result</th><th>Normal range</th><th>Notes</th><th></th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <button class="add-row-btn" data-add="bloodwork">+ Add result</button>
+  </section>
+
+  <!-- APPOINTMENTS -->
+  <section id="appointments" class="panel">
+    <h2>Appointment Tracker</h2>
+    <p class="subtitle">ENT, oncology, speech-language pathology, and primary care</p>
+    <table class="log-table" id="appointments-table">
+      <thead><tr><th>Date</th><th>Provider / Type</th><th>Reason</th><th>Follow-up?</th><th></th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <button class="add-row-btn" data-add="appointments">+ Add appointment</button>
+  </section>
+
+  <!-- MEDICATIONS -->
+  <section id="medications" class="panel">
+    <h2>Medication Log</h2>
+    <p class="subtitle">Track what you take, when, and any side effects</p>
+    <table class="log-table" id="medications-table">
+      <thead><tr><th>Medication</th><th>Dose</th><th>Time</th><th>Taken</th><th>Notes</th><th></th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <button class="add-row-btn" data-add="medications">+ Add medication</button>
+  </section>
+
+  <!-- SYMPTOM JOURNAL -->
+  <section id="journal" class="panel">
+    <h2>Symptom &amp; Side-Effect Journal</h2>
+    <p class="subtitle">One entry per day — track what you notice and how it changes</p>
+    <label class="field">Date
+      <input type="date" id="journal-date">
+    </label>
+    <label class="field">What did you notice?
+      <textarea id="journal-noticed" rows="3"></textarea>
+    </label>
+    <p class="field-label">Severity</p>
+    <div class="pill-group" id="journal-severity" data-group="journal-severity">
+      <button data-value="Mild">Mild</button>
+      <button data-value="Moderate">Moderate</button>
+      <button data-value="Concerning">Concerning</button>
+      <button data-value="Call the doctor">Call the doctor</button>
+    </div>
+    <label class="field">What helped?
+      <textarea id="journal-helped" rows="3"></textarea>
+    </label>
+    <p class="field-label">Red flags to watch for (per your care team's guidance)</p>
+    <div class="checklist">
+      <label><input type="checkbox" data-key="journal-flag-1"> Fever, unusual pain, or swelling around the stoma</label>
+      <label><input type="checkbox" data-key="journal-flag-2"> Sudden change in breathing or difficulty clearing secretions</label>
+      <label><input type="checkbox" data-key="journal-flag-3"> Signs of infection or bleeding</label>
+    </div>
+    <button class="save-btn" data-save="journal">Save Entry</button>
+    <div class="history" id="journal-history"></div>
+  </section>
+
+  <!-- MILESTONES -->
+  <section id="milestones" class="panel">
+    <h2>Recovery Milestones</h2>
+    <p class="subtitle">Recovery isn't linear — mark the wins, however small</p>
+    <div class="milestone-list" id="milestone-list"></div>
+  </section>
+
+  <!-- CAREGIVER LOG -->
+  <section id="caregiver" class="panel">
+    <h2>Caregiver Communication Log</h2>
+    <p class="subtitle">For the people around you — what works, what to try, what to avoid</p>
+    <label class="field">Date
+      <input type="date" id="caregiver-date">
+    </label>
+    <p class="field-label">Communication method used today</p>
+    <div class="pill-group" id="caregiver-method" data-group="caregiver-method">
+      <button data-value="Voice device">Voice device</button>
+      <button data-value="TEP">TEP</button>
+      <button data-value="Electrolarynx">Electrolarynx</button>
+      <button data-value="Esophageal Speech">Esophageal Speech</button>
+      <button data-value="ASL">ASL</button>
+      <button data-value="Writing / notes app">Writing / notes app</button>
+      <button data-value="Gestures">Gestures</button>
+      <button data-value="Text-to-speech app">Text-to-speech app</button>
+      <button data-value="Other">Other</button>
+    </div>
+    <label class="field">What worked well this week
+      <textarea id="caregiver-worked" rows="3"></textarea>
+    </label>
+    <label class="field">What was frustrating or hard to communicate
+      <textarea id="caregiver-hard" rows="3"></textarea>
+    </label>
+    <label class="field">One thing to try differently next week
+      <textarea id="caregiver-try" rows="3"></textarea>
+    </label>
+    <button class="save-btn" data-save="caregiver">Save Entry</button>
+    <div class="history" id="caregiver-history"></div>
+  </section>
+
+</main>
+
+<footer class="app-footer">
+  <div class="wrap">
+    <p>Everything you enter stays on this device only — nothing is uploaded anywhere.
+      <button id="export-btn" class="link-btn">Export all data (.json)</button> ·
+      <button id="clear-btn" class="link-btn danger">Clear all data</button>
+    </p>
+  </div>
+</footer>
+
+<script src="ecg.js"></script>
+<script src="reminders.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
