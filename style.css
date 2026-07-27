@@ -37,31 +37,10 @@
   --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
 
   --radius: 10px;
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0d1420;
-    --panel: #141d2b;
-    --panel-raised: #1a2534;
-
-    --ink: #e8eef5;
-    --ink-muted: #8fa1b3;
-    --ink-faint: #56687a;
-
-    --border: #29394c;
-    --border-strong: #3c5065;
-
-    --accent: #4d9dff;
-    --accent-strong: #7ebaff;
-    --accent-soft: #182a3f;
-    --accent-glow: rgba(77, 157, 255, 0.5);
-    --on-accent: #05101d;
-
-    --ok: #4d9dff;
-    --warn: #e0a340;
-    --crit: #ee6a5c;
-  }
+  /* heartbeat mark: fixed red, independent of the interactive accent color,
+     always on — this app does not follow system dark mode. */
+  --heartbeat: #c62f22;
 }
 
 * { box-sizing: border-box; }

@@ -4,7 +4,7 @@
   const canvas = document.getElementById("ecg-canvas");
   if (!canvas) return;
   const ctx = canvas.getContext("2d");
-  const ecgColor = "#1b63d6"; // blue, matching the site's accent
+  const ecgColor = "#c62f22"; // fixed red — the heartbeat mark, independent of the site's accent color
 
   function resize() {
     const rect = canvas.getBoundingClientRect();
