@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=8">
+<link rel="stylesheet" href="style.css?v=10">
 </head>
 <body>
 
@@ -40,15 +40,16 @@
 
 <nav class="tabs">
   <div class="wrap tabs-scroll">
-    <button class="tab active" data-tab="daily">Daily Tracker</button>
     <button class="tab" data-tab="device">Device Care</button>
-    <button class="tab" data-tab="dietary">Dietary</button>
-    <button class="tab" data-tab="bloodwork">Bloodwork</button>
     <button class="tab" data-tab="appointments">Appointments</button>
     <button class="tab" data-tab="medications">Medications</button>
+    <button class="tab active" data-tab="daily">Daily Tracker</button>
+    <button class="tab" data-tab="dietary">Dietary</button>
+    <button class="tab" data-tab="bloodwork">Bloodwork</button>
     <button class="tab" data-tab="journal">Symptom Journal</button>
     <button class="tab" data-tab="milestones">Milestones</button>
     <button class="tab" data-tab="caregiver">Caregiver Log</button>
+    <button class="tab" data-tab="tracking">Tracking</button>
   </div>
 </nav>
 
@@ -274,6 +275,40 @@
     <div class="history" id="caregiver-history"></div>
   </section>
 
+  <!-- TRACKING -->
+  <section id="tracking" class="panel">
+    <h2>Tracking &amp; Reports</h2>
+    <p class="subtitle">A visual summary of everything you've logged — built to share with your SLP or care team</p>
+
+    <div class="stat-tiles" id="tracking-stats"></div>
+
+    <div class="chart-card">
+      <h3>Voice quality — last 14 entries</h3>
+      <div class="chart-wrap" id="chart-voice"></div>
+      <details class="chart-table"><summary>View as table</summary><div id="chart-voice-table"></div></details>
+    </div>
+
+    <div class="chart-card">
+      <h3>Medication adherence</h3>
+      <div class="chart-wrap" id="chart-meds"></div>
+      <details class="chart-table"><summary>View as table</summary><div id="chart-meds-table"></div></details>
+    </div>
+
+    <div class="chart-card">
+      <h3>Symptom severity breakdown</h3>
+      <div class="chart-wrap" id="chart-severity"></div>
+      <details class="chart-table"><summary>View as table</summary><div id="chart-severity-table"></div></details>
+    </div>
+
+    <div class="chart-card">
+      <h3>Recovery milestones progress</h3>
+      <div class="chart-wrap" id="chart-milestones"></div>
+      <details class="chart-table"><summary>View as table</summary><div id="chart-milestones-table"></div></details>
+    </div>
+
+    <button class="save-btn no-print" id="print-tracking-btn">Print / Save as PDF for your care team</button>
+  </section>
+
 </main>
 
 <footer class="app-footer">
@@ -288,5 +323,6 @@
 <script src="ecg.js"></script>
 <script src="reminders.js"></script>
 <script src="app.js"></script>
+<script src="tracking.js"></script>
 </body>
 </html>

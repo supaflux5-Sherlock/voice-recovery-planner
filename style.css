@@ -576,3 +576,173 @@ table.log-table input[type="checkbox"] {
 .link-btn.danger {
   color: var(--crit);
 }
+
+/* ---------- tracking: stat tiles ---------- */
+
+.stat-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.9rem 1rem;
+}
+
+.stat-label {
+  font-size: 0.78rem;
+  color: var(--ink-muted);
+}
+
+.stat-value {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* ---------- tracking: chart cards ---------- */
+
+.chart-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.1rem 1.3rem;
+  margin-bottom: 1.25rem;
+}
+
+.chart-card h3 {
+  margin: 0 0 0.9rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.chart-wrap {
+  position: relative;
+}
+
+.chart-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.chart-grid {
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.chart-tick, .chart-axis-label {
+  fill: var(--ink-faint);
+  font-size: 8px;
+  font-family: var(--font-display);
+}
+
+.bar-mark { cursor: pointer; }
+.bar-mark rect { transition: opacity 0.1s; }
+.bar-mark:hover rect, .bar-mark.mark-hover rect, .bar-mark:focus rect {
+  opacity: 0.75;
+}
+.bar-mark:focus { outline: none; }
+
+.donut-svg { width: 160px; max-width: 100%; height: auto; margin: 0 auto; display: block; }
+
+.donut-slice { cursor: pointer; transition: opacity 0.1s; }
+.donut-slice:hover, .donut-slice.mark-hover, .donut-slice:focus {
+  opacity: 0.8;
+  outline: none;
+}
+
+.donut-center-value {
+  font-size: 20px;
+  font-weight: 700;
+  fill: var(--ink);
+  font-family: var(--font-display);
+}
+
+.donut-center-label {
+  font-size: 8px;
+  fill: var(--ink-faint);
+  font-family: var(--font-display);
+}
+
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem 1.1rem;
+  margin-top: 0.9rem;
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  color: var(--ink-muted);
+}
+
+.legend-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.chart-tooltip {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  background: var(--ink);
+  color: #ffffff;
+  font-size: 0.78rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.1s;
+  z-index: 10;
+}
+
+.chart-tooltip.visible { opacity: 1; }
+
+.chart-empty {
+  color: var(--ink-muted);
+  font-size: 0.9rem;
+  padding: 1.5rem 0;
+  text-align: center;
+}
+
+.chart-table {
+  margin-top: 0.75rem;
+}
+
+.chart-table summary {
+  font-size: 0.82rem;
+  color: var(--accent-strong);
+  cursor: pointer;
+}
+
+.chart-data-table {
+  margin-top: 0.6rem;
+  margin-bottom: 0;
+}
+
+/* ---------- print (for sharing the Tracking page) ---------- */
+
+@media print {
+  .app-header, #ecg-canvas, .reminders-bar, .tabs, .app-footer, .no-print {
+    display: none !important;
+  }
+  main.wrap { padding-top: 0; }
+  .panel { display: none !important; }
+  #tracking.panel { display: block !important; }
+  .chart-card, .stat-tile { break-inside: avoid; }
+}
