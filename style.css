@@ -146,6 +146,12 @@ a { color: var(--accent-strong); }
 
 .brand:hover { color: var(--accent-strong); }
 
+.logo-lockup {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .title {
   font-weight: 700;
   font-size: 1.25rem;
