@@ -210,11 +210,19 @@
 
   document.getElementById("device-last-resupply").value = load("deviceLastResupply", "");
   document.getElementById("device-next-resupply").value = load("deviceNextResupply", "");
+  document.getElementById("device-last-membrane").value = load("deviceLastMembrane", "");
+  document.getElementById("device-next-membrane").value = load("deviceNextMembrane", "");
+  document.getElementById("device-last-unit").value = load("deviceLastUnit", "");
+  document.getElementById("device-next-unit").value = load("deviceNextUnit", "");
   document.getElementById("device-notes").value = load("deviceNotes", "");
 
   document.querySelector('[data-save="device"]').addEventListener("click", () => {
     save("deviceLastResupply", document.getElementById("device-last-resupply").value);
     save("deviceNextResupply", document.getElementById("device-next-resupply").value);
+    save("deviceLastMembrane", document.getElementById("device-last-membrane").value);
+    save("deviceNextMembrane", document.getElementById("device-next-membrane").value);
+    save("deviceLastUnit", document.getElementById("device-last-unit").value);
+    save("deviceNextUnit", document.getElementById("device-next-unit").value);
     save("deviceNotes", document.getElementById("device-notes").value);
     alert("Device care info saved.");
   });
