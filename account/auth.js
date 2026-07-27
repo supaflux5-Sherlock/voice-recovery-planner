@@ -47,6 +47,9 @@
   async function loginWithGoogle(credential) {
     const data = await request("/api/google-login", { credential });
     setSession(data.token, data.email);
+    if (data.name && !localStorage.getItem("vrp:profileName")) {
+      localStorage.setItem("vrp:profileName", JSON.stringify(data.name));
+    }
   }
 
   function logout() {
