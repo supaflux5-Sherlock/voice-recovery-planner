@@ -50,6 +50,14 @@
   }
 
   async function enableReminders() {
+    if (
+      !confirm(
+        "Turning on reminders sends your appointment and medication details (dates, providers, doses, times) to our reminder server, so it knows when to notify you. Everything else in this app stays on your device only. Continue?"
+      )
+    ) {
+      return;
+    }
+
     if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
       alert(
         "This browser doesn't support push notifications. On iPhone, add this page to your Home Screen first (Share > Add to Home Screen), then try again from there."
