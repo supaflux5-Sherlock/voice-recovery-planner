@@ -16,6 +16,16 @@
     localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(value));
   }
 
+  function flashSaved(btn) {
+    const original = btn.textContent;
+    btn.textContent = "Saved ✓";
+    btn.disabled = true;
+    setTimeout(() => {
+      btn.textContent = original;
+      btn.disabled = false;
+    }, 1200);
+  }
+
   function todayISO() {
     return new Date().toISOString().slice(0, 10);
   }
@@ -181,6 +191,26 @@
     },
   });
 
+  // ---------- Profile ----------
+  document.getElementById("profile-name").value = load("profileName", "");
+  document.getElementById("profile-diagnosis-date").value = load("profileDiagnosisDate", "");
+  document.getElementById("profile-surgery-date").value = load("profileSurgeryDate", "");
+  document.getElementById("profile-tracheostomy-date").value = load("profileTracheostomyDate", "");
+  document.getElementById("profile-ent").value = load("profileEnt", "");
+  document.getElementById("profile-slp").value = load("profileSlp", "");
+  document.getElementById("profile-notes").value = load("profileNotes", "");
+
+  document.querySelector('[data-save="profile"]').addEventListener("click", (e) => {
+    save("profileName", document.getElementById("profile-name").value);
+    save("profileDiagnosisDate", document.getElementById("profile-diagnosis-date").value);
+    save("profileSurgeryDate", document.getElementById("profile-surgery-date").value);
+    save("profileTracheostomyDate", document.getElementById("profile-tracheostomy-date").value);
+    save("profileEnt", document.getElementById("profile-ent").value);
+    save("profileSlp", document.getElementById("profile-slp").value);
+    save("profileNotes", document.getElementById("profile-notes").value);
+    flashSaved(e.currentTarget);
+  });
+
   // ---------- Device Care ----------
   const deviceCleanedToday = document.getElementById("device-cleaned-today");
   deviceCleanedToday.checked = load("deviceCleanedToday:" + todayISO(), false);
@@ -216,7 +246,7 @@
   document.getElementById("device-next-unit").value = load("deviceNextUnit", "");
   document.getElementById("device-notes").value = load("deviceNotes", "");
 
-  document.querySelector('[data-save="device"]').addEventListener("click", () => {
+  document.querySelector('[data-save="device"]').addEventListener("click", (e) => {
     save("deviceLastResupply", document.getElementById("device-last-resupply").value);
     save("deviceNextResupply", document.getElementById("device-next-resupply").value);
     save("deviceLastMembrane", document.getElementById("device-last-membrane").value);
@@ -224,7 +254,7 @@
     save("deviceLastUnit", document.getElementById("device-last-unit").value);
     save("deviceNextUnit", document.getElementById("device-next-unit").value);
     save("deviceNotes", document.getElementById("device-notes").value);
-    alert("Device care info saved.");
+    flashSaved(e.currentTarget);
   });
 
   // ---------- Editable tables (appointments / medications / bloodwork) ----------

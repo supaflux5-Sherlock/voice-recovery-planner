@@ -309,8 +309,50 @@
     containerEl.appendChild(table);
   }
 
+  // ---------- profile summary ----------
+  function renderProfileSummary(containerEl) {
+    const rows = [
+      ["Name", load("profileName", "")],
+      ["Cause", load("profile-cause", "")],
+      ["Diagnosis date", load("profileDiagnosisDate", "")],
+      ["Surgery / procedure date", load("profileSurgeryDate", "")],
+      ["Tracheostomy date", load("profileTracheostomyDate", "")],
+      ["Primary communication", load("profile-communication", "")],
+      ["ENT / surgeon", load("profileEnt", "")],
+      ["SLP", load("profileSlp", "")],
+    ].filter(([, v]) => v);
+
+    containerEl.innerHTML = "";
+    if (rows.length === 0) {
+      containerEl.style.display = "none";
+      return;
+    }
+    containerEl.style.display = "";
+    const title = document.createElement("h3");
+    title.textContent = "Patient profile";
+    containerEl.appendChild(title);
+    const grid = document.createElement("div");
+    grid.className = "profile-summary-grid";
+    rows.forEach(([label, value]) => {
+      const item = document.createElement("div");
+      item.className = "profile-summary-item";
+      const l = document.createElement("span");
+      l.className = "profile-summary-label";
+      l.textContent = label;
+      const v = document.createElement("span");
+      v.className = "profile-summary-value";
+      v.textContent = value;
+      item.appendChild(l);
+      item.appendChild(v);
+      grid.appendChild(item);
+    });
+    containerEl.appendChild(grid);
+  }
+
   // ---------- build everything ----------
   function renderTracking() {
+    renderProfileSummary(document.getElementById("tracking-profile"));
+
     // Stat tiles
     const milestoneState = load("milestones", {});
     const milestonesDone = Object.values(milestoneState).filter((m) => m && m.done).length;

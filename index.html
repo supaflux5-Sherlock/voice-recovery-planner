@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=13">
+<link rel="stylesheet" href="style.css?v=14">
 </head>
 <body>
 
@@ -39,6 +39,7 @@
 
 <nav class="tabs">
   <div class="wrap tabs-scroll">
+    <button class="tab" data-tab="profile">Profile</button>
     <button class="tab" data-tab="device">Device Care</button>
     <button class="tab" data-tab="appointments">Appointments</button>
     <button class="tab" data-tab="medications">Medications</button>
@@ -53,6 +54,61 @@
 </nav>
 
 <main class="wrap">
+
+  <!-- PROFILE -->
+  <section id="profile" class="panel">
+    <h2>Profile</h2>
+    <p class="subtitle">Background info worth having on hand — for new providers, or for you to look back on</p>
+
+    <label class="field">Name <span class="field-optional">(optional — only used on the printed report)</span>
+      <input type="text" id="profile-name" placeholder="Your name">
+    </label>
+
+    <p class="field-label">What led to your voice loss?</p>
+    <div class="pill-group" id="profile-cause" data-group="profile-cause">
+      <button data-value="Total Laryngectomy">Total Laryngectomy</button>
+      <button data-value="Partial Laryngectomy">Partial Laryngectomy</button>
+      <button data-value="Tracheostomy only">Tracheostomy only</button>
+      <button data-value="Vocal Cord Paralysis">Vocal Cord Paralysis</button>
+      <button data-value="Glossectomy / Oral Cancer Surgery">Glossectomy / Oral Cancer Surgery</button>
+      <button data-value="ALS / Neurological">ALS / Neurological</button>
+      <button data-value="Other">Other</button>
+    </div>
+
+    <label class="field">Diagnosis date
+      <input type="date" id="profile-diagnosis-date">
+    </label>
+    <label class="field">Surgery / procedure date
+      <input type="date" id="profile-surgery-date">
+    </label>
+    <label class="field">Tracheostomy date <span class="field-optional">(if different from surgery date)</span>
+      <input type="date" id="profile-tracheostomy-date">
+    </label>
+
+    <p class="field-label">Current primary way you communicate</p>
+    <div class="pill-group" id="profile-communication" data-group="profile-communication">
+      <button data-value="Voice device (TEP)">Voice device (TEP)</button>
+      <button data-value="Electrolarynx">Electrolarynx</button>
+      <button data-value="Esophageal Speech">Esophageal Speech</button>
+      <button data-value="ASL">ASL</button>
+      <button data-value="Writing / notes app">Writing / notes app</button>
+      <button data-value="Text-to-speech app">Text-to-speech app</button>
+      <button data-value="Gestures">Gestures</button>
+      <button data-value="Still learning">Still learning</button>
+      <button data-value="Other">Other</button>
+    </div>
+
+    <label class="field">ENT / surgeon name &amp; phone
+      <input type="text" id="profile-ent" placeholder="Dr. name, phone number">
+    </label>
+    <label class="field">Speech-language pathologist (SLP) name &amp; phone
+      <input type="text" id="profile-slp" placeholder="Name, phone number">
+    </label>
+    <label class="field">Anything else your care team should know
+      <textarea id="profile-notes" rows="4" placeholder="Allergies, other conditions, anything a new provider should know right away..."></textarea>
+    </label>
+    <button class="save-btn" data-save="profile">Save Profile</button>
+  </section>
 
   <!-- DAILY VOICE & BREATHING TRACKER -->
   <section id="daily" class="panel active">
@@ -278,6 +334,8 @@
   <section id="tracking" class="panel">
     <h2>Tracking &amp; Reports</h2>
     <p class="subtitle">A visual summary of everything you've logged — built to share with your SLP or care team</p>
+
+    <div class="profile-summary" id="tracking-profile"></div>
 
     <div class="stat-tiles" id="tracking-stats"></div>
 
