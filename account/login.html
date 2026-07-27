@@ -67,6 +67,24 @@
     padding: 0;
   }
   .auth-submit { width: 100%; margin-bottom: 0; }
+  .auth-divider {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 1.3rem 0;
+    color: var(--ink-faint);
+    font-size: 0.8rem;
+  }
+  .auth-divider::before, .auth-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .google-btn-wrap {
+    display: flex;
+    justify-content: center;
+  }
 </style>
 </head>
 <body>
@@ -97,6 +115,10 @@
       <button type="submit" class="save-btn auth-submit" id="auth-submit">Log in</button>
     </form>
 
+    <div class="auth-divider"><span>or</span></div>
+
+    <div id="g_id_signin" class="google-btn-wrap"></div>
+
     <p class="auth-toggle">
       <span id="toggle-prompt">Don't have an account?</span>
       <button type="button" id="toggle-mode">Sign up</button>
@@ -105,11 +127,40 @@
 </div>
 
 <script src="auth.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <script>
   (function () {
     if (window.VRPAuth.isLoggedIn()) {
       location.href = "index.html";
     }
+
+    window.handleGoogleCredential = async function (response) {
+      clearError();
+      try {
+        await window.VRPAuth.loginWithGoogle(response.credential);
+        location.href = "index.html";
+      } catch (err) {
+        showError(err.message);
+      }
+    };
+
+    function initGoogleButton() {
+      if (!window.google || !window.google.accounts) {
+        setTimeout(initGoogleButton, 200);
+        return;
+      }
+      google.accounts.id.initialize({
+        client_id: "894366959260-sk8q7ehd5v2phdl57i083s986manmku3.apps.googleusercontent.com",
+        callback: window.handleGoogleCredential,
+      });
+      google.accounts.id.renderButton(document.getElementById("g_id_signin"), {
+        theme: "outline",
+        size: "large",
+        width: 332,
+        text: "continue_with",
+      });
+    }
+    initGoogleButton();
 
     let mode = "login"; // or "signup"
     const form = document.getElementById("auth-form");

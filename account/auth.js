@@ -44,6 +44,11 @@
     setSession(data.token, email);
   }
 
+  async function loginWithGoogle(credential) {
+    const data = await request("/api/google-login", { credential });
+    setSession(data.token, data.email);
+  }
+
   function logout() {
     clearSession();
     location.href = "login.html";
@@ -59,7 +64,7 @@
     }).catch(() => {});
   }
 
-  window.VRPAuth = { getToken, isLoggedIn, signup, login, logout, trackEvent, EMAIL_KEY };
+  window.VRPAuth = { getToken, isLoggedIn, signup, login, loginWithGoogle, logout, trackEvent, EMAIL_KEY };
 
   document.addEventListener("DOMContentLoaded", () => {
     const logoutBtn = document.getElementById("logout-btn");
