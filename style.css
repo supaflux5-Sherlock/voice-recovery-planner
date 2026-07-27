@@ -286,6 +286,17 @@ main.wrap {
   max-width: 46ch;
 }
 
+.panel h3 {
+  margin: 1.75rem 0 0.9rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.panel h3:first-of-type {
+  margin-top: 0;
+}
+
 .field-optional {
   font-weight: 400;
   color: var(--ink-faint);
