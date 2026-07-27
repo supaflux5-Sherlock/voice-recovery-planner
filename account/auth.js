@@ -70,7 +70,9 @@
   window.VRPAuth = { getToken, isLoggedIn, signup, login, loginWithGoogle, logout, trackEvent, EMAIL_KEY };
 
   document.addEventListener("DOMContentLoaded", () => {
-    const logoutBtn = document.getElementById("logout-btn");
-    if (logoutBtn) logoutBtn.addEventListener("click", logout);
+    ["logout-btn", "header-logout-btn"].forEach((id) => {
+      const btn = document.getElementById(id);
+      if (btn) btn.addEventListener("click", logout);
+    });
   });
 })();
