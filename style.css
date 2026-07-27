@@ -131,20 +131,11 @@ a { color: var(--accent-strong); }
   height: 26px;
   border-radius: 50%;
   background: var(--accent);
-  color: var(--on-accent);
-  font-size: 0.68rem;
-  font-weight: 700;
-  text-decoration: none;
+  border: none;
+  cursor: pointer;
   flex-shrink: 0;
+  padding: 0;
 }
-
-.brand {
-  color: var(--ink-muted);
-  text-decoration: none;
-  font-size: 0.85rem;
-}
-
-.brand:hover { color: var(--accent-strong); }
 
 .profile-nav {
   display: inline-flex;
@@ -166,6 +157,17 @@ a { color: var(--accent-strong); }
 
 .profile-nav-link:hover {
   color: var(--accent-strong);
+}
+
+.avatar.profile-nav-link,
+.avatar.profile-nav-link:hover {
+  background: var(--accent);
+  color: var(--on-accent);
+  text-decoration: none;
+}
+
+.avatar.profile-nav-link:hover {
+  background: var(--accent-strong);
 }
 
 .logo-lockup {
