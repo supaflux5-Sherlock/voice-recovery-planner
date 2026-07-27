@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=17">
+<link rel="stylesheet" href="style.css?v=18">
 </head>
 <body>
 
@@ -244,10 +244,12 @@
       <label><input type="checkbox" data-key="bloodwork-renal"> Creatinine / eGFR / BUN (kidney/renal function)</label>
       <label><input type="checkbox" data-key="bloodwork-electrolytes"> Potassium / Sodium</label>
     </div>
-    <table class="log-table" id="bloodwork-table">
-      <thead><tr><th>Date</th><th>Test</th><th>Result</th><th>Normal range</th><th>Notes</th><th></th></tr></thead>
-      <tbody></tbody>
-    </table>
+    <div class="table-scroll">
+      <table class="log-table" id="bloodwork-table">
+        <thead><tr><th>Date</th><th>Test</th><th>Result</th><th>Normal range</th><th>Notes</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
     <button class="add-row-btn" data-add="bloodwork">+ Add result</button>
   </section>
 
@@ -257,17 +259,21 @@
     <p class="subtitle">ENT, oncology, speech-language pathology, and primary care — plus what you take, when, and any side effects</p>
 
     <h3>Appointments</h3>
-    <table class="log-table" id="appointments-table">
-      <thead><tr><th>Date</th><th>Provider / Type</th><th>Reason</th><th>Follow-up?</th><th></th></tr></thead>
-      <tbody></tbody>
-    </table>
+    <div class="table-scroll">
+      <table class="log-table" id="appointments-table">
+        <thead><tr><th>Date</th><th>Provider / Type</th><th>Reason</th><th>Follow-up?</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
     <button class="add-row-btn" data-add="appointments">+ Add appointment</button>
 
     <h3>Medications</h3>
-    <table class="log-table" id="medications-table">
-      <thead><tr><th>Medication</th><th>Dose</th><th>Time</th><th>Taken</th><th>Notes</th><th></th></tr></thead>
-      <tbody></tbody>
-    </table>
+    <div class="table-scroll">
+      <table class="log-table" id="medications-table">
+        <thead><tr><th>Medication</th><th>Dose</th><th>Time</th><th>Taken</th><th>Notes</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
     <button class="add-row-btn" data-add="medications">+ Add medication</button>
   </section>
 

@@ -231,11 +231,34 @@ a { color: var(--accent-strong); }
   z-index: 5;
 }
 
+.tabs::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 28px;
+  background: linear-gradient(to right, transparent, var(--panel));
+  pointer-events: none;
+}
+
 .tabs-scroll {
   display: flex;
   gap: 0.3rem;
   overflow-x: auto;
   padding: 0.6rem 1.25rem;
+  position: relative;
+}
+
+/* ---------- wide-content scroll wrappers ---------- */
+
+.table-scroll {
+  overflow-x: auto;
+  margin-bottom: 1rem;
+}
+
+.table-scroll table.log-table {
+  margin-bottom: 0;
 }
 
 .tab {
