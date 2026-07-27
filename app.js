@@ -78,7 +78,7 @@
   });
 
   // set default dates
-  ["daily-date", "journal-date", "caregiver-date", "dietary-date"].forEach((id) => {
+  ["daily-date", "journal-date", "caregiver-date", "dietary-date", "wellbeing-date"].forEach((id) => {
     const el = document.getElementById(id);
     if (el && !el.value) el.value = todayISO();
   });
@@ -162,6 +162,49 @@
       return `<div class="entry-date">${e.date}${e.severity ? " — " + e.severity : ""}</div>
         <div>${e.noticed || ""}</div>
         ${e.helped ? "<div><em>Helped:</em> " + e.helped + "</div>" : ""}`;
+    },
+  });
+
+  setupDatedForm({
+    saveKey: "wellbeing",
+    storageKey: "wellbeingEntries",
+    historyId: "wellbeing-history",
+    collect() {
+      const weighing = {};
+      document.querySelectorAll("#wellbeing-weighing-checklist input[type=checkbox]").forEach((cb) => {
+        weighing[cb.dataset.key] = cb.checked;
+      });
+      const helped = {};
+      document.querySelectorAll("#wellbeing-helped-checklist input[type=checkbox]").forEach((cb) => {
+        helped[cb.dataset.key] = cb.checked;
+      });
+      return {
+        date: document.getElementById("wellbeing-date").value || todayISO(),
+        mood: selectedPill("wellbeing-mood"),
+        weighing,
+        helped,
+        goodThing: document.getElementById("wellbeing-good-thing").value,
+        notes: document.getElementById("wellbeing-notes").value,
+      };
+    },
+    reset() {
+      document.getElementById("wellbeing-good-thing").value = "";
+      document.getElementById("wellbeing-notes").value = "";
+    },
+    renderEntry(e) {
+      const weighingItems = Object.entries(e.weighing || {})
+        .filter(([, v]) => v)
+        .map(([k]) => k.replace("wellbeing-weighing-", "").replace(/-/g, " "))
+        .join(", ");
+      const helpedItems = Object.entries(e.helped || {})
+        .filter(([, v]) => v)
+        .map(([k]) => k.replace("wellbeing-helped-", "").replace(/-/g, " "))
+        .join(", ");
+      return `<div class="entry-date">${e.date}${e.mood ? " — " + e.mood : ""}</div>
+        <div>${weighingItems ? "On your mind: " + weighingItems : ""}</div>
+        <div>${helpedItems ? "Helped: " + helpedItems : ""}</div>
+        ${e.goodThing ? "<div><em>Good thing:</em> " + e.goodThing + "</div>" : ""}
+        <div>${e.notes ? e.notes : ""}</div>`;
     },
   });
 

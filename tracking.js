@@ -14,6 +14,7 @@
 
   const MILESTONE_TOTAL = 10;
   const FEEL_SCORE = { Strained: 1, Tired: 2, Okay: 3, Clear: 4, Strong: 5 };
+  const MOOD_SCORE = { Struggling: 1, Low: 2, Okay: 3, Good: 4, Strong: 5 };
   const SEVERITY_ORDER = ["Mild", "Moderate", "Concerning", "Call the doctor"];
   const SEVERITY_COLOR = { Mild: "#86b6ef", Moderate: "#3987e5", Concerning: "#256abf", "Call the doctor": "#104281" };
   const GOOD = "#0ca30c";
@@ -395,6 +396,34 @@
       document.getElementById("chart-voice-table"),
       ["Date", "Voice quality"],
       scored.map((e) => [e.date, e.feel])
+    );
+
+    // Emotional wellbeing bar chart
+    const wellbeingEntries = load("wellbeingEntries", []);
+    const moodScored = wellbeingEntries
+      .filter((e) => e.mood && MOOD_SCORE[e.mood])
+      .slice()
+      .sort((a, b) => (a.date < b.date ? -1 : 1))
+      .slice(-14);
+
+    const wellbeingWrap = document.getElementById("chart-wellbeing");
+    if (moodScored.length === 0) {
+      renderEmpty(wellbeingWrap, "No wellbeing entries logged yet — save a Wellbeing entry to see this chart.");
+    } else {
+      renderBarChart(wellbeingWrap, {
+        items: moodScored.map((e) => ({
+          label: fmtDate(e.date),
+          value: MOOD_SCORE[e.mood],
+          title: e.mood,
+        })),
+        max: 5,
+        ticks: [1, 3, 5],
+      });
+    }
+    renderTable(
+      document.getElementById("chart-wellbeing-table"),
+      ["Date", "Mood"],
+      moodScored.map((e) => [e.date, e.mood])
     );
 
     // Medication adherence bar chart

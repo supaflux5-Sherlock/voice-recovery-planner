@@ -397,6 +397,45 @@ input[type="checkbox"]:checked::after {
   color: var(--ink);
 }
 
+/* ---------- resource / crisis-support card ---------- */
+
+.resource-card {
+  background: var(--accent-soft);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 1.1rem 1.3rem;
+  margin-bottom: 1.5rem;
+}
+
+.resource-card h3 {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--accent-strong);
+}
+
+.resource-card h3:not(:first-child) {
+  margin-top: 1rem;
+}
+
+.resource-card ul {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.resource-card li {
+  margin-bottom: 0.4rem;
+  font-size: 0.92rem;
+}
+
+.resource-note {
+  margin: 0.85rem 0 0;
+  font-size: 0.8rem;
+  color: var(--ink-muted);
+  font-style: italic;
+}
+
 .week-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
