@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Usage Stats — Voice Recovery Planner</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="style.css">
+<style>
+  .admin-wrap { max-width: 760px; margin: 0 auto; padding: 2rem 1.25rem; }
+  .admin-key-row { display: flex; gap: 0.6rem; margin-bottom: 2rem; }
+  .admin-key-row input { flex: 1; }
+  .stat-tiles { margin-bottom: 2rem; }
+  .admin-section { margin-bottom: 2rem; }
+  .admin-section h2 { font-size: 1.1rem; margin: 0 0 0.9rem; }
+  .admin-error { color: var(--crit); font-size: 0.9rem; margin-bottom: 1rem; display: none; }
+  .admin-error.visible { display: block; }
+</style>
+</head>
+<body>
+
+<div class="admin-wrap">
+  <h1>Usage stats</h1>
+  <p class="subtitle">Content-free analytics only — signups and which features get used, never anyone's actual health data.</p>
+
+  <div class="admin-key-row">
+    <input type="password" id="admin-key-input" placeholder="Admin key">
+    <button class="save-btn" id="admin-load-btn" style="margin-bottom:0;">View stats</button>
+  </div>
+  <p class="admin-error" id="admin-error"></p>
+
+  <div id="admin-content" style="display:none;">
+    <div class="stat-tiles" id="admin-stat-tiles"></div>
+
+    <div class="admin-section">
+      <h2>Feature usage (all-time)</h2>
+      <table class="log-table" id="admin-events-table">
+        <thead><tr><th>Event</th><th>Count</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="admin-section">
+      <h2>Recent signups</h2>
+      <table class="log-table" id="admin-signups-table">
+        <thead><tr><th>Email</th><th>Signed up</th><th>Last login</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  const API_BASE = "https://voice-recovery-planner-push.supaflux5.workers.dev";
+  const KEY_STORAGE = "vrpAdminKey";
+
+  const keyInput = document.getElementById("admin-key-input");
+  const loadBtn = document.getElementById("admin-load-btn");
+  const errorEl = document.getElementById("admin-error");
+  const contentEl = document.getElementById("admin-content");
+
+  const savedKey = localStorage.getItem(KEY_STORAGE);
+  if (savedKey) {
+    keyInput.value = savedKey;
+    load();
+  }
+
+  loadBtn.addEventListener("click", load);
+
+  async function load() {
+    const key = keyInput.value.trim();
+    if (!key) return;
+    errorEl.classList.remove("visible");
+    loadBtn.disabled = true;
+    loadBtn.textContent = "Loading...";
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/stats?key=${encodeURIComponent(key)}`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to load stats");
+      localStorage.setItem(KEY_STORAGE, key);
+      render(data);
+    } catch (err) {
+      errorEl.textContent = err.message;
+      errorEl.classList.add("visible");
+      contentEl.style.display = "none";
+    } finally {
+      loadBtn.disabled = false;
+      loadBtn.textContent = "View stats";
+    }
+  }
+
+  function render(data) {
+    contentEl.style.display = "";
+
+    const tilesEl = document.getElementById("admin-stat-tiles");
+    tilesEl.innerHTML = "";
+    [
+      { label: "Total signups", value: String(data.totalUsers) },
+      { label: "Active in last 7 days", value: String(data.activeLast7Days) },
+      { label: "Active in last 30 days", value: String(data.activeLast30Days) },
+    ].forEach((tile) => {
+      const div = document.createElement("div");
+      div.className = "stat-tile";
+      const l = document.createElement("span");
+      l.className = "stat-label";
+      l.textContent = tile.label;
+      const v = document.createElement("span");
+      v.className = "stat-value";
+      v.textContent = tile.value;
+      div.appendChild(l);
+      div.appendChild(v);
+      tilesEl.appendChild(div);
+    });
+    tilesEl.style.display = "grid";
+    tilesEl.style.gridTemplateColumns = "repeat(auto-fit, minmax(150px, 1fr))";
+    tilesEl.style.gap = "0.75rem";
+
+    const eventsBody = document.querySelector("#admin-events-table tbody");
+    eventsBody.innerHTML = "";
+    (data.eventsByType || []).forEach((row) => {
+      const tr = document.createElement("tr");
+      const tdEvent = document.createElement("td");
+      tdEvent.textContent = row.event_type;
+      const tdCount = document.createElement("td");
+      tdCount.textContent = row.c;
+      tr.appendChild(tdEvent);
+      tr.appendChild(tdCount);
+      eventsBody.appendChild(tr);
+    });
+
+    const signupsBody = document.querySelector("#admin-signups-table tbody");
+    signupsBody.innerHTML = "";
+    (data.recentSignups || []).forEach((row) => {
+      const tr = document.createElement("tr");
+      [row.email, row.created_at, row.last_login_at || "—"].forEach((val) => {
+        const td = document.createElement("td");
+        td.textContent = val;
+        tr.appendChild(td);
+      });
+      signupsBody.appendChild(tr);
+    });
+  }
+})();
+</script>
+</body>
+</html>

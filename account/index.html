@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Voice Recovery Planner</title>
+<meta name="description" content="A daily companion app for life after laryngectomy — voice tracking, device care, appointments, medications, and recovery milestones.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=18">
+<script>
+  if (!localStorage.getItem("vrpAccountToken")) {
+    location.href = "login.html";
+  }
+</script>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="wrap">
+    <div class="profile-lockup">
+      <button class="avatar profile-nav-link" data-jump="profile" aria-label="My Profile">
+        <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="8" r="4" fill="currentColor"/>
+          <path d="M4,21 C4,16 7.5,13.5 12,13.5 C16.5,13.5 20,16 20,21" fill="currentColor"/>
+        </svg>
+      </button>
+      <nav class="profile-nav">
+        <button class="profile-nav-link" data-jump="profile">My Profile</button>
+        <button class="profile-nav-link" data-jump="wellbeing">Wellbeing</button>
+      </nav>
+    </div>
+    <span class="logo-lockup">
+      <svg width="26" height="26" viewBox="0 0 64 64" aria-hidden="true">
+        <rect width="64" height="64" rx="14" fill="var(--accent)"/>
+        <path d="M25,12 H39 V25 H52 V39 H39 V52 H25 V39 H12 V25 H25 Z"
+              fill="#ffffff" stroke="var(--heartbeat)" stroke-width="3" stroke-linejoin="round"/>
+      </svg>
+      <span class="title">Voice Recovery Planner</span>
+    </span>
+  </div>
+</header>
+<canvas id="ecg-canvas"></canvas>
+
+<div class="reminders-bar">
+  <div class="wrap">
+    <span class="status-line">
+      <span id="reminders-dot" class="status-dot"></span>
+      <span id="reminders-status">Reminders are off</span>
+    </span>
+    <button id="reminders-toggle" class="save-btn small">Enable reminders</button>
+  </div>
+</div>
+
+<nav class="tabs">
+  <div class="wrap tabs-scroll">
+    <button class="tab tab-hidden" data-tab="profile">Profile</button>
+    <button class="tab" data-tab="device">Device Care</button>
+    <button class="tab" data-tab="appointments">Appointments &amp; Medications</button>
+    <button class="tab active" data-tab="daily">Daily Tracker</button>
+    <button class="tab" data-tab="dietary">Dietary</button>
+    <button class="tab" data-tab="bloodwork">Bloodwork</button>
+    <button class="tab" data-tab="journal">Symptom Journal</button>
+    <button class="tab" data-tab="wellbeing">Wellbeing</button>
+    <button class="tab" data-tab="milestones">Milestones</button>
+    <button class="tab" data-tab="caregiver">Caregiver Log</button>
+    <button class="tab" data-tab="tracking">Tracking</button>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- PROFILE -->
+  <section id="profile" class="panel">
+    <h2>Profile</h2>
+    <p class="subtitle">Background info worth having on hand — for new providers, or for you to look back on</p>
+
+    <label class="field">Name <span class="field-optional">(optional — only used on the printed report)</span>
+      <input type="text" id="profile-name" placeholder="Your name">
+    </label>
+
+    <p class="field-label">What led to your voice loss?</p>
+    <div class="pill-group" id="profile-cause" data-group="profile-cause">
+      <button data-value="Total Laryngectomy">Total Laryngectomy</button>
+      <button data-value="Partial Laryngectomy">Partial Laryngectomy</button>
+      <button data-value="Tracheostomy only">Tracheostomy only</button>
+      <button data-value="Vocal Cord Paralysis">Vocal Cord Paralysis</button>
+      <button data-value="Glossectomy / Oral Cancer Surgery">Glossectomy / Oral Cancer Surgery</button>
+      <button data-value="ALS / Neurological">ALS / Neurological</button>
+      <button data-value="Other">Other</button>
+    </div>
+
+    <label class="field">Diagnosis date
+      <input type="date" id="profile-diagnosis-date">
+    </label>
+    <label class="field">Surgery / procedure date
+      <input type="date" id="profile-surgery-date">
+    </label>
+    <label class="field">Tracheostomy date <span class="field-optional">(if different from surgery date)</span>
+      <input type="date" id="profile-tracheostomy-date">
+    </label>
+
+    <p class="field-label">Current primary way you communicate</p>
+    <div class="pill-group" id="profile-communication" data-group="profile-communication">
+      <button data-value="Voice device (TEP)">Voice device (TEP)</button>
+      <button data-value="Electrolarynx">Electrolarynx</button>
+      <button data-value="Esophageal Speech">Esophageal Speech</button>
+      <button data-value="ASL">ASL</button>
+      <button data-value="Writing / notes app">Writing / notes app</button>
+      <button data-value="Text-to-speech app">Text-to-speech app</button>
+      <button data-value="Gestures">Gestures</button>
+      <button data-value="Still learning">Still learning</button>
+      <button data-value="Other">Other</button>
+    </div>
+
+    <label class="field">ENT / surgeon name &amp; phone
+      <input type="text" id="profile-ent" placeholder="Dr. name, phone number">
+    </label>
+    <label class="field">Speech-language pathologist (SLP) name &amp; phone
+      <input type="text" id="profile-slp" placeholder="Name, phone number">
+    </label>
+    <label class="field">Anything else your care team should know
+      <textarea id="profile-notes" rows="4" placeholder="Allergies, other conditions, anything a new provider should know right away..."></textarea>
+    </label>
+    <button class="save-btn" data-save="profile">Save Profile</button>
+  </section>
+
+  <!-- DAILY VOICE & BREATHING TRACKER -->
+  <section id="daily" class="panel active">
+    <h2>Daily Voice &amp; Breathing Tracker</h2>
+    <p class="subtitle">Track exercises, voicing time, and how your voice felt today</p>
+    <label class="field">Date
+      <input type="date" id="daily-date">
+    </label>
+    <div class="checklist" id="daily-checklist">
+      <label><input type="checkbox" data-key="daily-diaphragmatic"> Diaphragmatic breathing</label>
+      <label><input type="checkbox" data-key="daily-restperiod"> Voice rest period taken</label>
+      <label><input type="checkbox" data-key="daily-pacing"> Practiced pacing / breath support while speaking</label>
+      <label><input type="checkbox" data-key="daily-humming"> Humming or gentle voicing warm-up</label>
+      <label><input type="checkbox" data-key="daily-therapy"> Speech therapy home exercises</label>
+    </div>
+    <p class="field-label">How did your voice feel today?</p>
+    <div class="pill-group" id="daily-scale" data-group="daily-feel">
+      <button data-value="Strained">Strained</button>
+      <button data-value="Tired">Tired</button>
+      <button data-value="Okay">Okay</button>
+      <button data-value="Clear">Clear</button>
+      <button data-value="Strong">Strong</button>
+    </div>
+    <label class="field">Notes
+      <textarea id="daily-notes" rows="4" placeholder="Anything worth remembering about today..."></textarea>
+    </label>
+    <button class="save-btn" data-save="daily">Save Today's Entry</button>
+    <div class="history" id="daily-history"></div>
+  </section>
+
+  <!-- DEVICE CARE SCHEDULE -->
+  <section id="device" class="panel">
+    <h2>Voice Device Care Schedule</h2>
+    <p class="subtitle">Daily cleaning, weekly refurbishing, and resupply — never miss a step</p>
+
+    <p class="field-label">Which device(s) do you use?</p>
+    <div class="checklist" id="device-type-checklist">
+      <label><input type="checkbox" data-key="devicetype-laryngectomy"> Laryngectomy (stoma / HME)</label>
+      <label><input type="checkbox" data-key="devicetype-tep"> TEP (voice prosthesis)</label>
+      <label><input type="checkbox" data-key="devicetype-avavoice"> Ava Voice</label>
+      <label><input type="checkbox" data-key="devicetype-mira"> Mira</label>
+    </div>
+
+    <div class="card">
+      <h3>Today</h3>
+      <label><input type="checkbox" id="device-cleaned-today"> Cleaned overnight (before bed)</label>
+    </div>
+
+    <div class="card">
+      <h3>This Week</h3>
+      <div class="week-grid" id="device-week"></div>
+    </div>
+
+    <div class="card">
+      <h3>Every 6 Months</h3>
+      <label class="field">Last resupply ordered
+        <input type="date" id="device-last-resupply">
+      </label>
+      <label class="field">Next resupply due
+        <input type="date" id="device-next-resupply">
+      </label>
+    </div>
+
+    <div class="card">
+      <h3>Membrane Replacement (Ava Voice / Mira)</h3>
+      <label class="field">Last replaced
+        <input type="date" id="device-last-membrane">
+      </label>
+      <label class="field">Next due
+        <input type="date" id="device-next-membrane">
+      </label>
+    </div>
+
+    <div class="card">
+      <h3>Unit Replacement (Ava Voice / Mira)</h3>
+      <label class="field">Last replaced
+        <input type="date" id="device-last-unit">
+      </label>
+      <label class="field">Next due
+        <input type="date" id="device-next-unit">
+      </label>
+    </div>
+
+    <label class="field">Device issue notes
+      <textarea id="device-notes" rows="4" placeholder="Any issues with the device this week..."></textarea>
+    </label>
+    <button class="save-btn" data-save="device">Save</button>
+  </section>
+
+  <!-- DIETARY -->
+  <section id="dietary" class="panel">
+    <h2>Dietary</h2>
+    <p class="subtitle">Track how you're getting nutrition today — by mouth, feeding tube, or IV</p>
+    <label class="field">Date
+      <input type="date" id="dietary-date">
+    </label>
+    <p class="field-label">Feeding method today</p>
+    <div class="checklist" id="dietary-checklist">
+      <label><input type="checkbox" data-key="dietary-mouth"> Feeding by mouth</label>
+      <label><input type="checkbox" data-key="dietary-tube"> Feeding tube</label>
+      <label><input type="checkbox" data-key="dietary-iv"> IV</label>
+    </div>
+    <label class="field">Notes (what/how much, tolerance, any issues)
+      <textarea id="dietary-notes" rows="4" placeholder="What you ate or how feeding went today..."></textarea>
+    </label>
+    <button class="save-btn" data-save="dietary">Save Today's Entry</button>
+    <div class="history" id="dietary-history"></div>
+  </section>
+
+  <!-- BLOODWORK -->
+  <section id="bloodwork" class="panel">
+    <h2>Bloodwork Tracking</h2>
+    <p class="subtitle">Focused on anemia, thyroid, and vitamin/mineral/kidney (renal) function</p>
+    <p class="field-label">Common tests worth asking your doctor about</p>
+    <div class="checklist" id="bloodwork-checklist">
+      <label><input type="checkbox" data-key="bloodwork-hgb"> Hemoglobin / Hematocrit (anemia)</label>
+      <label><input type="checkbox" data-key="bloodwork-iron"> Iron / Ferritin</label>
+      <label><input type="checkbox" data-key="bloodwork-b12"> Vitamin B12 / Folate</label>
+      <label><input type="checkbox" data-key="bloodwork-vitd"> Vitamin D</label>
+      <label><input type="checkbox" data-key="bloodwork-calcmag"> Calcium / Magnesium / Zinc</label>
+      <label><input type="checkbox" data-key="bloodwork-tsh"> Thyroid function (TSH)</label>
+      <label><input type="checkbox" data-key="bloodwork-renal"> Creatinine / eGFR / BUN (kidney/renal function)</label>
+      <label><input type="checkbox" data-key="bloodwork-electrolytes"> Potassium / Sodium</label>
+    </div>
+    <div class="table-scroll">
+      <table class="log-table" id="bloodwork-table">
+        <thead><tr><th>Date</th><th>Test</th><th>Result</th><th>Normal range</th><th>Notes</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <button class="add-row-btn" data-add="bloodwork">+ Add result</button>
+  </section>
+
+  <!-- APPOINTMENTS & MEDICATIONS -->
+  <section id="appointments" class="panel">
+    <h2>Appointments &amp; Medications</h2>
+    <p class="subtitle">ENT, oncology, speech-language pathology, and primary care — plus what you take, when, and any side effects</p>
+
+    <h3>Appointments</h3>
+    <div class="table-scroll">
+      <table class="log-table" id="appointments-table">
+        <thead><tr><th>Date</th><th>Provider / Type</th><th>Reason</th><th>Follow-up?</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <button class="add-row-btn" data-add="appointments">+ Add appointment</button>
+
+    <h3>Medications</h3>
+    <div class="table-scroll">
+      <table class="log-table" id="medications-table">
+        <thead><tr><th>Medication</th><th>Dose</th><th>Time</th><th>Taken</th><th>Notes</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <button class="add-row-btn" data-add="medications">+ Add medication</button>
+  </section>
+
+  <!-- SYMPTOM JOURNAL -->
+  <section id="journal" class="panel">
+    <h2>Symptom &amp; Side-Effect Journal</h2>
+    <p class="subtitle">One entry per day — track what you notice and how it changes</p>
+    <label class="field">Date
+      <input type="date" id="journal-date">
+    </label>
+    <label class="field">What did you notice?
+      <textarea id="journal-noticed" rows="3"></textarea>
+    </label>
+    <p class="field-label">Severity</p>
+    <div class="pill-group" id="journal-severity" data-group="journal-severity">
+      <button data-value="Mild">Mild</button>
+      <button data-value="Moderate">Moderate</button>
+      <button data-value="Concerning">Concerning</button>
+      <button data-value="Call the doctor">Call the doctor</button>
+    </div>
+    <label class="field">What helped?
+      <textarea id="journal-helped" rows="3"></textarea>
+    </label>
+    <p class="field-label">Red flags to watch for (per your care team's guidance)</p>
+    <div class="checklist">
+      <label><input type="checkbox" data-key="journal-flag-1"> Fever, unusual pain, or swelling around the stoma</label>
+      <label><input type="checkbox" data-key="journal-flag-2"> Sudden change in breathing or difficulty clearing secretions</label>
+      <label><input type="checkbox" data-key="journal-flag-3"> Signs of infection or bleeding</label>
+    </div>
+    <button class="save-btn" data-save="journal">Save Entry</button>
+    <div class="history" id="journal-history"></div>
+  </section>
+
+  <!-- WELLBEING -->
+  <section id="wellbeing" class="panel">
+    <h2>Emotional Wellbeing</h2>
+    <p class="subtitle">Whatever led here — an accident, cancer, or anything else — adjusting to a new voice or a new life is part of recovery too</p>
+
+    <div class="resource-card">
+      <h3>If you're in crisis right now</h3>
+      <ul>
+        <li><strong>Call or text 988</strong> — Suicide &amp; Crisis Lifeline, free and available 24/7. Texting works when speaking is hard.</li>
+        <li><strong>Text HOME to 741741</strong> — Crisis Text Line, 24/7, text-only.</li>
+        <li><strong>Call 911</strong> or go to your nearest ER for a medical emergency.</li>
+      </ul>
+      <h3>More support</h3>
+      <ul>
+        <li>American Cancer Society 24/7 Helpline — 1-800-227-2345</li>
+        <li>CancerCare (free counseling &amp; support groups) — 1-800-813-4673</li>
+        <li>NAMI HelpLine (mental health, any cause) — 1-800-950-6264</li>
+        <li>WebWhispers — free online community for laryngectomees (webwhispers.org)</li>
+        <li>SPOHNC — Support for People with Oral and Head and Neck Cancer (spohnc.org)</li>
+      </ul>
+      <p class="resource-note">This app doesn't replace professional care. If you're worried, reach out to your care team or one of the resources above.</p>
+    </div>
+
+    <label class="field">Date
+      <input type="date" id="wellbeing-date">
+    </label>
+
+    <p class="field-label">Overall mood today</p>
+    <div class="pill-group" id="wellbeing-mood" data-group="wellbeing-mood">
+      <button data-value="Struggling">Struggling</button>
+      <button data-value="Low">Low</button>
+      <button data-value="Okay">Okay</button>
+      <button data-value="Good">Good</button>
+      <button data-value="Strong">Strong</button>
+    </div>
+
+    <p class="field-label">What's weighing on you today?</p>
+    <div class="checklist" id="wellbeing-weighing-checklist">
+      <label><input type="checkbox" data-key="wellbeing-weighing-isolation"> Isolation or loneliness</label>
+      <label><input type="checkbox" data-key="wellbeing-weighing-grief"> Grief about the changes</label>
+      <label><input type="checkbox" data-key="wellbeing-weighing-anxiety"> Anxiety about health or scans</label>
+      <label><input type="checkbox" data-key="wellbeing-weighing-communication"> Frustration communicating</label>
+      <label><input type="checkbox" data-key="wellbeing-weighing-recurrence"> Fear of recurrence</label>
+      <label><input type="checkbox" data-key="wellbeing-weighing-bodyimage"> Body image</label>
+      <label><input type="checkbox" data-key="wellbeing-weighing-financial"> Financial stress</label>
+      <label><input type="checkbox" data-key="wellbeing-weighing-sleep"> Sleep trouble</label>
+      <label><input type="checkbox" data-key="wellbeing-weighing-relationship"> Relationship strain</label>
+      <label><input type="checkbox" data-key="wellbeing-weighing-other"> Other</label>
+    </div>
+
+    <p class="field-label">What helped today?</p>
+    <div class="checklist" id="wellbeing-helped-checklist">
+      <label><input type="checkbox" data-key="wellbeing-helped-talked"> Talked with someone</label>
+      <label><input type="checkbox" data-key="wellbeing-helped-group"> Support group</label>
+      <label><input type="checkbox" data-key="wellbeing-helped-therapy"> Therapy or counseling</label>
+      <label><input type="checkbox" data-key="wellbeing-helped-meditation"> Meditation or prayer</label>
+      <label><input type="checkbox" data-key="wellbeing-helped-activity"> Physical activity</label>
+      <label><input type="checkbox" data-key="wellbeing-helped-creative"> Creative outlet</label>
+      <label><input type="checkbox" data-key="wellbeing-helped-rest"> Rest</label>
+      <label><input type="checkbox" data-key="wellbeing-helped-outdoors"> Time outdoors</label>
+      <label><input type="checkbox" data-key="wellbeing-helped-other"> Other</label>
+    </div>
+
+    <label class="field">One good thing about today
+      <textarea id="wellbeing-good-thing" rows="2" placeholder="Even something small counts..."></textarea>
+    </label>
+    <label class="field">Notes
+      <textarea id="wellbeing-notes" rows="4" placeholder="Whatever's on your mind..."></textarea>
+    </label>
+
+    <p class="field-label">Please check in with your care team or a crisis line above if you notice</p>
+    <div class="checklist">
+      <label><input type="checkbox" data-key="wellbeing-flag-1"> Thoughts of harming yourself or ending your life</label>
+      <label><input type="checkbox" data-key="wellbeing-flag-2"> Overwhelming hopelessness</label>
+      <label><input type="checkbox" data-key="wellbeing-flag-3"> Can't get out of bed or function day to day</label>
+      <label><input type="checkbox" data-key="wellbeing-flag-4"> Using alcohol or drugs to cope</label>
+      <label><input type="checkbox" data-key="wellbeing-flag-5"> Withdrawing from everyone</label>
+    </div>
+
+    <button class="save-btn" data-save="wellbeing">Save Entry</button>
+    <div class="history" id="wellbeing-history"></div>
+  </section>
+
+  <!-- MILESTONES -->
+  <section id="milestones" class="panel">
+    <h2>Recovery Milestones</h2>
+    <p class="subtitle">Recovery isn't linear — mark the wins, however small</p>
+    <div class="milestone-list" id="milestone-list"></div>
+  </section>
+
+  <!-- CAREGIVER LOG -->
+  <section id="caregiver" class="panel">
+    <h2>Caregiver Communication Log</h2>
+    <p class="subtitle">For the people around you — what works, what to try, what to avoid</p>
+    <label class="field">Date
+      <input type="date" id="caregiver-date">
+    </label>
+    <p class="field-label">Communication method used today</p>
+    <div class="pill-group" id="caregiver-method" data-group="caregiver-method">
+      <button data-value="Voice device">Voice device</button>
+      <button data-value="TEP">TEP</button>
+      <button data-value="Electrolarynx">Electrolarynx</button>
+      <button data-value="Esophageal Speech">Esophageal Speech</button>
+      <button data-value="ASL">ASL</button>
+      <button data-value="Writing / notes app">Writing / notes app</button>
+      <button data-value="Gestures">Gestures</button>
+      <button data-value="Text-to-speech app">Text-to-speech app</button>
+      <button data-value="Other">Other</button>
+    </div>
+    <label class="field">What worked well this week
+      <textarea id="caregiver-worked" rows="3"></textarea>
+    </label>
+    <label class="field">What was frustrating or hard to communicate
+      <textarea id="caregiver-hard" rows="3"></textarea>
+    </label>
+    <label class="field">One thing to try differently next week
+      <textarea id="caregiver-try" rows="3"></textarea>
+    </label>
+    <button class="save-btn" data-save="caregiver">Save Entry</button>
+    <div class="history" id="caregiver-history"></div>
+  </section>
+
+  <!-- TRACKING -->
+  <section id="tracking" class="panel">
+    <h2>Tracking &amp; Reports</h2>
+    <p class="subtitle">A visual summary of everything you've logged — built to share with your SLP or care team</p>
+
+    <div class="profile-summary" id="tracking-profile"></div>
+
+    <div class="stat-tiles" id="tracking-stats"></div>
+
+    <div class="chart-card">
+      <h3>Voice quality — last 14 entries</h3>
+      <div class="chart-wrap" id="chart-voice"></div>
+      <details class="chart-table"><summary>View as table</summary><div id="chart-voice-table"></div></details>
+    </div>
+
+    <div class="chart-card">
+      <h3>Emotional wellbeing — last 14 entries</h3>
+      <div class="chart-wrap" id="chart-wellbeing"></div>
+      <details class="chart-table"><summary>View as table</summary><div id="chart-wellbeing-table"></div></details>
+    </div>
+
+    <div class="chart-card">
+      <h3>Medication adherence</h3>
+      <div class="chart-wrap" id="chart-meds"></div>
+      <details class="chart-table"><summary>View as table</summary><div id="chart-meds-table"></div></details>
+    </div>
+
+    <div class="chart-card">
+      <h3>Symptom severity breakdown</h3>
+      <div class="chart-wrap" id="chart-severity"></div>
+      <details class="chart-table"><summary>View as table</summary><div id="chart-severity-table"></div></details>
+    </div>
+
+    <div class="chart-card">
+      <h3>Recovery milestones progress</h3>
+      <div class="chart-wrap" id="chart-milestones"></div>
+      <details class="chart-table"><summary>View as table</summary><div id="chart-milestones-table"></div></details>
+    </div>
+
+    <button class="save-btn no-print" id="print-tracking-btn">Print / Save as PDF for your care team</button>
+  </section>
+
+</main>
+
+<footer class="app-footer">
+  <div class="wrap">
+    <p>Your health tracking data stays on this device only, with one exception: if you turn on
+      push reminders, your appointment and medication details sync to our reminder server so it
+      knows when to notify you. We also log which features you use (never their content) so we
+      can see real usage and improve the app.
+      <button id="export-btn" class="link-btn">Export all data (.json)</button> ·
+      <button id="clear-btn" class="link-btn danger">Clear all data</button> ·
+      <button id="sample-data-btn" class="link-btn">Load sample data (demo)</button> ·
+      <button id="logout-btn" class="link-btn">Log out</button>
+    </p>
+  </div>
+</footer>
+
+<script src="auth.js"></script>
+<script src="sample-data.js"></script>
+<script src="ecg.js"></script>
+<script src="reminders.js"></script>
+<script src="app.js"></script>
+<script src="tracking.js"></script>
+</body>
+</html>

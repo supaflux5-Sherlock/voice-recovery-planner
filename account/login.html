@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign in — Voice Recovery Planner</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  .auth-wrap {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+  .auth-card {
+    width: 100%;
+    max-width: 380px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+  }
+  .auth-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+  }
+  .auth-card h1 {
+    font-size: 1.3rem;
+    margin: 0 0 0.3rem;
+  }
+  .auth-subtitle {
+    color: var(--ink-muted);
+    font-size: 0.9rem;
+    margin: 0 0 1.5rem;
+  }
+  .auth-error {
+    background: #fdeceb;
+    color: var(--crit);
+    border: 1px solid #f3c6c2;
+    border-radius: 8px;
+    padding: 0.7rem 0.9rem;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+    display: none;
+  }
+  .auth-error.visible { display: block; }
+  .auth-toggle {
+    text-align: center;
+    margin-top: 1.2rem;
+    font-size: 0.88rem;
+    color: var(--ink-muted);
+  }
+  .auth-toggle button {
+    background: none;
+    border: none;
+    color: var(--accent-strong);
+    font: inherit;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+  }
+  .auth-submit { width: 100%; margin-bottom: 0; }
+</style>
+</head>
+<body>
+
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <svg width="26" height="26" viewBox="0 0 64 64" aria-hidden="true">
+        <rect width="64" height="64" rx="14" fill="var(--accent)"/>
+        <path d="M25,12 H39 V25 H52 V39 H39 V52 H25 V39 H12 V25 H25 Z"
+              fill="#ffffff" stroke="var(--heartbeat)" stroke-width="3" stroke-linejoin="round"/>
+      </svg>
+      <span class="title">Voice Recovery Planner</span>
+    </div>
+
+    <h1 id="form-title">Welcome back</h1>
+    <p class="auth-subtitle" id="form-subtitle">Log in to your account to continue.</p>
+
+    <div class="auth-error" id="auth-error"></div>
+
+    <form id="auth-form">
+      <label class="field">Email
+        <input type="email" id="auth-email" autocomplete="email" required>
+      </label>
+      <label class="field">Password
+        <input type="password" id="auth-password" autocomplete="current-password" required minlength="8">
+      </label>
+      <button type="submit" class="save-btn auth-submit" id="auth-submit">Log in</button>
+    </form>
+
+    <p class="auth-toggle">
+      <span id="toggle-prompt">Don't have an account?</span>
+      <button type="button" id="toggle-mode">Sign up</button>
+    </p>
+  </div>
+</div>
+
+<script src="auth.js"></script>
+<script>
+  (function () {
+    if (window.VRPAuth.isLoggedIn()) {
+      location.href = "index.html";
+    }
+
+    let mode = "login"; // or "signup"
+    const form = document.getElementById("auth-form");
+    const errorEl = document.getElementById("auth-error");
+    const submitBtn = document.getElementById("auth-submit");
+    const toggleBtn = document.getElementById("toggle-mode");
+    const togglePrompt = document.getElementById("toggle-prompt");
+    const titleEl = document.getElementById("form-title");
+    const subtitleEl = document.getElementById("form-subtitle");
+
+    function showError(msg) {
+      errorEl.textContent = msg;
+      errorEl.classList.add("visible");
+    }
+
+    function clearError() {
+      errorEl.classList.remove("visible");
+    }
+
+    toggleBtn.addEventListener("click", () => {
+      clearError();
+      mode = mode === "login" ? "signup" : "login";
+      if (mode === "signup") {
+        titleEl.textContent = "Create your account";
+        subtitleEl.textContent = "Password must be at least 8 characters.";
+        submitBtn.textContent = "Sign up";
+        togglePrompt.textContent = "Already have an account?";
+        toggleBtn.textContent = "Log in";
+      } else {
+        titleEl.textContent = "Welcome back";
+        subtitleEl.textContent = "Log in to your account to continue.";
+        submitBtn.textContent = "Log in";
+        togglePrompt.textContent = "Don't have an account?";
+        toggleBtn.textContent = "Sign up";
+      }
+    });
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      clearError();
+      const email = document.getElementById("auth-email").value.trim();
+      const password = document.getElementById("auth-password").value;
+      submitBtn.disabled = true;
+      const originalText = submitBtn.textContent;
+      submitBtn.textContent = mode === "login" ? "Logging in..." : "Signing up...";
+      try {
+        if (mode === "login") {
+          await window.VRPAuth.login(email, password);
+        } else {
+          await window.VRPAuth.signup(email, password);
+        }
+        location.href = "index.html";
+      } catch (err) {
+        showError(err.message);
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+      }
+    });
+  })();
+</script>
+</body>
+</html>
