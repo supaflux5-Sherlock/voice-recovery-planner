@@ -46,6 +46,14 @@
   const lastTabBtn = document.querySelector(`.tab[data-tab="${lastTab}"]`);
   if (lastTabBtn) lastTabBtn.click();
 
+  document.querySelectorAll(".profile-nav-link[data-jump]").forEach((link) => {
+    link.addEventListener("click", () => {
+      const target = document.querySelector(`.tab[data-tab="${link.dataset.jump}"]`);
+      if (target) target.click();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  });
+
   // ---------- Pill groups (single-select) ----------
   document.querySelectorAll(".pill-group").forEach((group) => {
     const key = group.dataset.group;
