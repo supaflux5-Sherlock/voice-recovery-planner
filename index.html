@@ -233,7 +233,7 @@
   <!-- BLOODWORK -->
   <section id="bloodwork" class="panel">
     <h2>Bloodwork Tracking</h2>
-    <p class="subtitle">Focused on anemia and vitamin/mineral/kidney (renal) function</p>
+    <p class="subtitle">Focused on anemia, thyroid, and vitamin/mineral/kidney (renal) function</p>
     <p class="field-label">Common tests worth asking your doctor about</p>
     <div class="checklist" id="bloodwork-checklist">
       <label><input type="checkbox" data-key="bloodwork-hgb"> Hemoglobin / Hematocrit (anemia)</label>
@@ -241,6 +241,7 @@
       <label><input type="checkbox" data-key="bloodwork-b12"> Vitamin B12 / Folate</label>
       <label><input type="checkbox" data-key="bloodwork-vitd"> Vitamin D</label>
       <label><input type="checkbox" data-key="bloodwork-calcmag"> Calcium / Magnesium / Zinc</label>
+      <label><input type="checkbox" data-key="bloodwork-tsh"> Thyroid function (TSH)</label>
       <label><input type="checkbox" data-key="bloodwork-renal"> Creatinine / eGFR / BUN (kidney/renal function)</label>
       <label><input type="checkbox" data-key="bloodwork-electrolytes"> Potassium / Sodium</label>
     </div>
@@ -477,11 +478,13 @@
   <div class="wrap">
     <p>Everything you enter stays on this device only — nothing is uploaded anywhere.
       <button id="export-btn" class="link-btn">Export all data (.json)</button> ·
-      <button id="clear-btn" class="link-btn danger">Clear all data</button>
+      <button id="clear-btn" class="link-btn danger">Clear all data</button> ·
+      <button id="sample-data-btn" class="link-btn">Load sample data (demo)</button>
     </p>
   </div>
 </footer>
 
+<script src="sample-data.js"></script>
 <script src="ecg.js"></script>
 <script src="reminders.js"></script>
 <script src="app.js"></script>
