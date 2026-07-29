@@ -919,10 +919,30 @@ table.log-table input[type="checkbox"] {
   margin-bottom: 0;
 }
 
+.brand-mark-clip {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 220px;
+  height: 220px;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.brand-mark {
+  position: absolute;
+  bottom: -60px;
+  left: -60px;
+  width: 760px;
+  height: auto;
+  opacity: 0.10;
+}
+
 /* ---------- print (for sharing the Tracking page) ---------- */
 
 @media print {
-  .app-header, #ecg-canvas, .reminders-bar, .tabs, .app-footer, .no-print {
+  .app-header, #ecg-canvas, .reminders-bar, .tabs, .app-footer, .no-print, .brand-mark-clip {
     display: none !important;
   }
   main.wrap { padding-top: 0; }
@@ -930,3 +950,163 @@ table.log-table input[type="checkbox"] {
   #tracking.panel { display: block !important; }
   .chart-card, .stat-tile, .profile-summary { break-inside: avoid; }
 }
+
+/* ---------- Cast to Screen ---------- */
+
+.cast-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-left: auto;
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  background: var(--panel);
+  color: var(--ink);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.cast-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.cast-popover {
+  position: fixed;
+  inset: 0;
+  background: rgba(18, 32, 47, 0.45);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.cast-popover[hidden] { display: none; }
+
+.cast-popover-inner {
+  position: relative;
+  background: var(--panel);
+  border-radius: var(--radius);
+  max-width: 420px;
+  width: 100%;
+  padding: 1.75rem;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+}
+
+.cast-popover-inner h3 { margin: 0 0 0.6rem; }
+.cast-popover-inner p { margin: 0 0 0.8rem; color: var(--ink-muted); }
+.cast-popover-inner ol { margin: 0; padding-left: 1.2rem; color: var(--ink); line-height: 1.6; }
+.cast-popover-inner li { margin-bottom: 0.4rem; }
+
+.cast-popover-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.9rem;
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--ink-muted);
+}
+
+/* ---------- Calendar ---------- */
+
+.calendar-widget {
+  margin-top: 1rem;
+  padding: 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--panel);
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.calendar-header button {
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--accent);
+  padding: 0.2rem 0.6rem;
+}
+
+.calendar-month-label {
+  font-weight: 600;
+  min-width: 9rem;
+  text-align: center;
+}
+
+.calendar-weekdays,
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.3rem;
+}
+
+.calendar-weekdays span {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--ink-muted);
+  padding-bottom: 0.3rem;
+}
+
+.calendar-day {
+  position: relative;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  background: var(--panel-raised);
+  color: var(--ink);
+  cursor: default;
+}
+
+.calendar-day.is-empty { background: none; }
+.calendar-day.is-today { outline: 2px solid var(--accent); }
+
+.calendar-day.has-appt {
+  cursor: pointer;
+  background: var(--accent-soft);
+  font-weight: 600;
+}
+
+.calendar-day.has-appt::after {
+  content: "";
+  position: absolute;
+  bottom: 4px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.calendar-day.has-appt:hover { background: var(--accent); color: var(--on-accent); }
+.calendar-day.has-appt:hover::after { background: var(--on-accent); }
+
+.calendar-day-detail {
+  margin-top: 0.9rem;
+  font-size: 0.9rem;
+}
+
+.calendar-day-detail:empty { margin-top: 0; }
+
+.calendar-day-detail .detail-card {
+  padding: 0.7rem 0.9rem;
+  border-radius: 8px;
+  background: var(--accent-soft);
+}
+
+.calendar-day-detail .detail-card strong { display: block; margin-bottom: 0.2rem; }

@@ -400,7 +400,10 @@
       { key: "followup", placeholder: "Follow-up?" },
     ],
     "appointments",
-    () => window.__vrpSyncReminders && window.__vrpSyncReminders()
+    () => {
+      window.__vrpSyncReminders && window.__vrpSyncReminders();
+      window.__vrpRenderCalendar && window.__vrpRenderCalendar();
+    }
   );
 
   setupTable(
@@ -429,6 +432,110 @@
     ],
     "bloodwork"
   );
+
+  // ---------- Appointments calendar ----------
+  (function setupCalendar() {
+    const grid = document.getElementById("cal-grid");
+    const label = document.getElementById("cal-month-label");
+    const detail = document.getElementById("cal-day-detail");
+    if (!grid) return;
+
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"];
+
+    const today = new Date();
+    let viewYear = today.getFullYear();
+    let viewMonth = today.getMonth();
+
+    function apptsByDate() {
+      const rows = load("appointmentRows", []);
+      const map = {};
+      rows.forEach((row) => {
+        if (!row.date) return;
+        (map[row.date] = map[row.date] || []).push(row);
+      });
+      return map;
+    }
+
+    function render() {
+      const map = apptsByDate();
+      label.textContent = `${monthNames[viewMonth]} ${viewYear}`;
+      grid.innerHTML = "";
+      detail.innerHTML = "";
+
+      const firstDay = new Date(viewYear, viewMonth, 1).getDay();
+      const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+      const todayISOStr = todayISO();
+
+      for (let i = 0; i < firstDay; i++) {
+        const cell = document.createElement("div");
+        cell.className = "calendar-day is-empty";
+        grid.appendChild(cell);
+      }
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const iso = `${viewYear}-${String(viewMonth + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+        const cell = document.createElement("div");
+        cell.className = "calendar-day";
+        cell.textContent = d;
+        if (iso === todayISOStr) cell.classList.add("is-today");
+        const dayAppts = map[iso];
+        if (dayAppts) {
+          cell.classList.add("has-appt");
+          cell.setAttribute("role", "button");
+          cell.setAttribute("tabindex", "0");
+          cell.addEventListener("click", () => showDetail(iso, dayAppts));
+          cell.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") showDetail(iso, dayAppts);
+          });
+        }
+        grid.appendChild(cell);
+      }
+    }
+
+    function showDetail(iso, appts) {
+      const dateLabel = new Date(iso + "T00:00:00").toLocaleDateString(undefined, {
+        weekday: "long", month: "long", day: "numeric",
+      });
+      detail.innerHTML = "";
+      appts.forEach((a) => {
+        const card = document.createElement("div");
+        card.className = "detail-card";
+        card.innerHTML = `<strong>${dateLabel}</strong>${a.provider || "Appointment"}${a.reason ? " — " + a.reason : ""}`;
+        detail.appendChild(card);
+      });
+    }
+
+    document.getElementById("cal-prev").addEventListener("click", () => {
+      viewMonth -= 1;
+      if (viewMonth < 0) { viewMonth = 11; viewYear -= 1; }
+      render();
+    });
+    document.getElementById("cal-next").addEventListener("click", () => {
+      viewMonth += 1;
+      if (viewMonth > 11) { viewMonth = 0; viewYear += 1; }
+      render();
+    });
+
+    render();
+    window.__vrpRenderCalendar = render;
+  })();
+
+  // ---------- Cast to Screen ----------
+  (function setupCast() {
+    const btn = document.getElementById("cast-btn");
+    const popover = document.getElementById("cast-popover");
+    const closeBtn = document.getElementById("cast-popover-close");
+    if (!btn || !popover) return;
+    btn.addEventListener("click", () => { popover.hidden = false; });
+    closeBtn.addEventListener("click", () => { popover.hidden = true; });
+    popover.addEventListener("click", (e) => {
+      if (e.target === popover) popover.hidden = true;
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !popover.hidden) popover.hidden = true;
+    });
+  })();
 
   // ---------- Dietary (dated entries) ----------
   // Note: the feeding-method checklist below is already wired up by the generic
