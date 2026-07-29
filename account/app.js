@@ -299,6 +299,7 @@
   document.getElementById("device-next-membrane").value = load("deviceNextMembrane", "");
   document.getElementById("device-last-unit").value = load("deviceLastUnit", "");
   document.getElementById("device-next-unit").value = load("deviceNextUnit", "");
+  document.getElementById("device-larytube-size").value = load("deviceLaryTubeSize", "");
   document.getElementById("device-notes").value = load("deviceNotes", "");
 
   document.querySelector('[data-save="device"]').addEventListener("click", (e) => {
@@ -308,10 +309,31 @@
     save("deviceNextMembrane", document.getElementById("device-next-membrane").value);
     save("deviceLastUnit", document.getElementById("device-last-unit").value);
     save("deviceNextUnit", document.getElementById("device-next-unit").value);
+    save("deviceLaryTubeSize", document.getElementById("device-larytube-size").value);
     save("deviceNotes", document.getElementById("device-notes").value);
     flashSaved(e.currentTarget);
     if (window.VRPAuth) window.VRPAuth.trackEvent("saved_device_care");
   });
+
+  // Ava Voice / Mira maintenance and Lary Tube details only matter once that
+  // device is actually selected, so keep them out of the way otherwise.
+  const larytubeCheckbox = document.querySelector('[data-key="devicetype-larytube"]');
+  const avavoiceCheckbox = document.querySelector('[data-key="devicetype-avavoice"]');
+  const miraCheckbox = document.querySelector('[data-key="devicetype-mira"]');
+  const larytubeCard = document.getElementById("device-larytube-card");
+  const membraneCard = document.getElementById("device-membrane-card");
+  const unitCard = document.getElementById("device-unit-card");
+
+  function updateDeviceCardVisibility() {
+    larytubeCard.classList.toggle("hidden", !larytubeCheckbox.checked);
+    const showAvaOrMira = avavoiceCheckbox.checked || miraCheckbox.checked;
+    membraneCard.classList.toggle("hidden", !showAvaOrMira);
+    unitCard.classList.toggle("hidden", !showAvaOrMira);
+  }
+  [larytubeCheckbox, avavoiceCheckbox, miraCheckbox].forEach((cb) =>
+    cb.addEventListener("change", updateDeviceCardVisibility)
+  );
+  updateDeviceCardVisibility();
 
   // ---------- Editable tables (appointments / medications / bloodwork) ----------
   function setupTable(tableId, storageKey, columns, addKey, onChange) {

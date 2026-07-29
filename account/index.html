@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=18">
+<link rel="stylesheet" href="style.css?v=20">
 <script>
   if (!localStorage.getItem("vrpAccountToken")) {
     location.href = "login.html";
@@ -165,6 +165,7 @@
     <p class="field-label">Which device(s) do you use?</p>
     <div class="checklist" id="device-type-checklist">
       <label><input type="checkbox" data-key="devicetype-laryngectomy"> Laryngectomy (stoma / HME)</label>
+      <label><input type="checkbox" data-key="devicetype-larytube"> Laryngectomy tube (lary tube)</label>
       <label><input type="checkbox" data-key="devicetype-tep"> TEP (voice prosthesis)</label>
       <label><input type="checkbox" data-key="devicetype-avavoice"> Ava Voice</label>
       <label><input type="checkbox" data-key="devicetype-mira"> Mira</label>
@@ -181,6 +182,25 @@
     </div>
 
     <div class="card">
+      <h3>Stoma Care</h3>
+      <div class="checklist" id="stoma-care-checklist">
+        <label><input type="checkbox" data-key="stomacare-hme"> HME / filter changed</label>
+        <label><input type="checkbox" data-key="stomacare-cleaned"> Stoma cleaned</label>
+        <label><input type="checkbox" data-key="stomacare-seal"> Baseplate / adhesive seal checked</label>
+        <label><input type="checkbox" data-key="stomacare-humidification"> Humidification used</label>
+        <label><input type="checkbox" data-key="stomacare-mucus"> Checked for excess mucus / crusting</label>
+        <label><input type="checkbox" data-key="stomacare-cover"> Stoma cover / bib worn</label>
+      </div>
+    </div>
+
+    <div class="card hidden" id="device-larytube-card">
+      <h3>Lary Tube Details</h3>
+      <label class="field">Lary tube size
+        <input type="text" id="device-larytube-size" placeholder="e.g. 8mm diameter, or brand/model">
+      </label>
+    </div>
+
+    <div class="card">
       <h3>Every 6 Months</h3>
       <label class="field">Last resupply ordered
         <input type="date" id="device-last-resupply">
@@ -190,7 +210,7 @@
       </label>
     </div>
 
-    <div class="card">
+    <div class="card hidden" id="device-membrane-card">
       <h3>Membrane Replacement (Ava Voice / Mira)</h3>
       <label class="field">Last replaced
         <input type="date" id="device-last-membrane">
@@ -200,7 +220,7 @@
       </label>
     </div>
 
-    <div class="card">
+    <div class="card hidden" id="device-unit-card">
       <h3>Unit Replacement (Ava Voice / Mira)</h3>
       <label class="field">Last replaced
         <input type="date" id="device-last-unit">

@@ -284,6 +284,19 @@ a { color: var(--accent-strong); }
   display: none;
 }
 
+/* On wider screens there's no reason to hide tabs behind a horizontal
+   scroll — wrap them onto a second row so every tab stays visible and
+   discoverable without a scroll gesture. */
+@media (min-width: 640px) {
+  .tabs::after {
+    display: none;
+  }
+  .tabs-scroll {
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+}
+
 .tab.active {
   background: var(--accent-soft);
   color: var(--accent-strong);
@@ -479,6 +492,10 @@ input[type="checkbox"]:checked::after {
   border-radius: var(--radius);
   padding: 1.1rem 1.3rem;
   margin-bottom: 1.25rem;
+}
+
+.card.hidden {
+  display: none;
 }
 
 .card h3 {
